@@ -67,25 +67,41 @@ client.connect(err => {
 
 
 
-    // review post to database start
-    // admin add service post start
+
+    // review post start
+    const reviewCollection = client.db("techService").collection("review");
     app.post("/addReview", (req, res) => {
         const newAddReview = req.body;
+        reviewCollection.insertOne(newAddReview)
+            .then((result) => {
+                res.send(result.insertedCount > 0);
+            })
         console.log('adding new service', newAddReview);
-        // const userReview = client.db("techService").collection("review");
-        // adminCollection.insertOne(newAddService)
-        //     .then(result => {
-        //         console.log('inserted count', result.insertedCount);
-        //         res.send(result.insertedCount > 0)
-        //     })
     })
-    // admin add service post end
-    // review post to database end
+    // Review post end 
 
 
+    // get review from Database start
+    app.get("/getReview", (req, res) => {
+        reviewCollection.find()
+            .toArray((error, documents) => {
+                res.send(documents);
+            })
+    })
+    // get review from database end
 
-
-
+    // post payment with order start
+    const addOrderCollection = client.db("techService").collection("order");
+    app.post("/addOrder", (req, res) => {
+        const newAddOrder = req.body;
+        console.log('adding new order', newAddOrder);
+        addOrderCollection.insertOne(newAddOrder)
+            .then(result => {
+                console.log('inserted count', result.insertedCount);
+                res.send(result.insertedCount > 0)
+            })
+    })
+    // post payment with order end
 });
 
 // mongodb
